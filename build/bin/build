@@ -3,4 +3,4 @@
 ALPINE_VERSION="${1:-latest}"
 
 docker buildx create --use --name build --node build --driver-opt network=host
-docker buildx build --pull --push --build-arg "ALPINE_VERSION=${ALPINE_VERSION}" --platform "linux/amd64,linux/armhf,linux/aarch64" --tag "nlss/attr:latest" --tag "ghcr.io/nlss/attr:latest" .
+docker buildx build --pull --push --build-arg "ALPINE_VERSION=${ALPINE_VERSION}" --platform "linux/amd64,linux/armhf,linux/aarch64" --tag "nlss/attr:latest" .
