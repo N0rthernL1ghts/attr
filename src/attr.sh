@@ -50,11 +50,13 @@ main() {
     fi
 
     # Arguments. Simple handling.
-    TARGET_PATH=${1:-}
-    RECURSIVE=${2:-}
-    OWNERSHIP=${3:-}
-    FMODE=${4:-}
-    DMODE=${5:-}
+    readonly TARGET_PATH=${1:-}
+    readonly RECURSIVE=${2:-}
+    readonly OWNERSHIP=${3:-}
+    readonly FMODE=${4:-}
+    readonly DMODE=${5:-}
+    
+    export TARGET_PATH RECURSIVE OWNERSHIP FMODE DMODE
 
     # Always required
     if [ -z "${TARGET_PATH}" ]; then
