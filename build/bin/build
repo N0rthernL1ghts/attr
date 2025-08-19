@@ -1,7 +1,10 @@
 #!/usr/bin/env sh
 
 docker buildx create --use --name build --node build --driver-opt network=host
+
+readonly BUILD_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 docker buildx build --pull --push \
     --platform "linux/amd64,linux/armhf,linux/aarch64" \
+    --build-arg "BUILD_TIMESTAMP=${BUILD_TIMESTAMP}" \
     --tag "nlss/attr:latest" \
     --tag "ghcr.io/n0rthernl1ghts/attr:latest" .
