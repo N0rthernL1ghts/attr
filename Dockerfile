@@ -1,6 +1,5 @@
-FROM --platform=${TARGETPLATFORM} alpine:3.14
+FROM scratch
 
-COPY src/attr.sh /usr/local/bin/attr
-RUN chmod +x /usr/local/bin/attr
+ADD --chmod=0777 src/attr.sh /usr/local/bin/attr
 
 CMD ["/usr/local/bin/attr"]
