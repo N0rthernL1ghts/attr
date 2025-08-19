@@ -2,7 +2,7 @@
 # This script is recursive by default
 # Adapted from https://github.com/just-containers/s6-overlay/issues/146#issuecomment-256545379
 
-set -e # Exit on any error
+set -e
 
 # Global variables
 readonly SCRIPT_NAME="$(basename "$0")"
@@ -35,8 +35,8 @@ EOF
 
 # Validate that a path exists
 validate_path() {
-    local path="$1"
-    if [[ ! -e ${path} ]]; then
+    path="$1"
+    if [ ! -e "${path}" ]; then
         printf "Error: Path '%s' does not exist\n" "${path}" >&2
         return 1
     fi
@@ -44,8 +44,8 @@ validate_path() {
 
 # Validate ownership format (user:group or just user)
 validate_ownership() {
-    local ownership="${1}"
-    if [[ ${ownership} = "false" ]]; then
+    ownership="${1}"
+    if [ "${ownership}" = "false" ]; then
         return 0
     fi
 
@@ -58,10 +58,10 @@ validate_ownership() {
 
 # Validate permission format (octal)
 validate_permissions() {
-    local perms="${1:?}"
-    local type="${2:?}"
+    perms="${1:?}"
+    type="${2:?}"
 
-    if [[ ${perms} == "false" ]]; then
+    if [ "${perms}" = "false" ]; then
         return 0
     fi
 
@@ -74,17 +74,17 @@ validate_permissions() {
 
 # Change ownership of files/directories
 do_chown() {
-    local target_path="${1:?}"
-    local ownership="${2:?}"
+    target_path="${1:?}"
+    ownership="${2:?}"
 
-    if [[ ${ownership} = "false" ]]; then
+    if [ "${ownership}" = "false" ]; then
         echo "Skipping ownership changes (OWNERSHIP=false)"
         return 0
     fi
 
     echo "Changing ownership to '${ownership}'..."
 
-    if [[ -f ${target_path} ]]; then
+    if [ -f "${target_path}" ]; then
         chown -v "${ownership}" "${target_path}"
     else
         chown -hvR "${ownership}" "${target_path}"
@@ -93,33 +93,33 @@ do_chown() {
 
 # Change permissions of files/directories
 do_chmod() {
-    local target_path="${1:?}"
-    local fmode="${2:?}"
-    local dmode="${3:?}"
+    target_path="${1:?}"
+    fmode="${2:?}"
+    dmode="${3:?}"
 
-    if [[ ${fmode} = "false" ]] && [[ ${dmode} = "false" ]]; then
+    if [ "${fmode}" = "false" ] && [ "${dmode}" = "false" ]; then
         echo "Skipping permission changes (both FMODE and DMODE are false)"
         return 0
     fi
 
     # Handle file permissions
-    if [[ -f ${target_path} ]] && [[ ${fmode} != "false" ]]; then
+    if [ -f "${target_path}" ] && [ "${fmode}" != "false" ]; then
         echo "Setting file permissions to '${fmode}'..."
         chmod -v "${fmode}" "${target_path}"
         return 0
     fi
 
     # Handle directory permissions
-    if [[ -d ${target_path} ]]; then
-        if [[ ${fmode} != "false" ]]; then
+    if [ -d "${target_path}" ]; then
+        if [ "${fmode}" != "false" ]; then
             echo "Setting file permissions to '${fmode}' (recursively)..."
             find "${target_path}" -type f -exec chmod -v "${fmode}" {} \;
         fi
 
-        if [[ ${dmode} != "false" ]]; then
+        if [ "${dmode}" != "false" ]; then
             echo "Setting directory permissions to '${dmode}' (recursively)..."
             find "${target_path}" -type d -exec chmod -v "${dmode}" {} \;
-        elif [[ ${fmode} != "false" ]]; then
+        elif [ "${fmode}" != "false" ]; then
             # If only FMODE is set for a directory, apply it to directories too
             echo "Setting directory permissions to '${fmode}' (recursively)..."
             find "${target_path}" -type d -exec chmod -v "${fmode}" {} \;
@@ -130,13 +130,13 @@ do_chmod() {
 # Main function
 main() {
     # Check for help flag
-    if [[ ${1:-} = "-h" ]] || [[ ${1:-} = "--help" ]]; then
+    if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
         usage
         return 0
     fi
 
     # Check argument count
-    if [[ $# -lt 4 ]] || [[ $# -gt 5 ]]; then
+    if [ $# -lt 4 ] || [ $# -gt 5 ]; then
         printf "Error: Invalid number of arguments\n" >&2
         echo "" >&2
         usage >&2
@@ -144,11 +144,11 @@ main() {
     fi
 
     # Parse arguments
-    local target_path="${1:?}"
-    local recursive="${2:?}"
-    local ownership="${3:?}"
-    local fmode="${4:?}"
-    local dmode="${5:-false}"
+    target_path="${1:?}"
+    recursive="${2:?}"
+    ownership="${3:?}"
+    fmode="${4:?}"
+    dmode="${5:-false}"
 
     # Validate arguments
     if [ -z "${target_path}" ]; then
@@ -162,7 +162,7 @@ main() {
     validate_permissions "${dmode}" "directory" || return 1
 
     # Warn about recursive mode
-    if [[ ${recursive} == "false" ]]; then
+    if [ "${recursive}" = "false" ]; then
         echo "Warning: Disabling recursive mode is not supported yet" >&2
     fi
 
