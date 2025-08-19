@@ -31,4 +31,4 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
       - name: Build image
-        run: build/bin/build 3.14
+        run: build/bin/build
